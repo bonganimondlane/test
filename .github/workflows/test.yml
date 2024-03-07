@@ -36,6 +36,7 @@ jobs:
         for i in {1..5}; do
           if sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
             echo "MSSQL server is accessible."
+            sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
             break
           else
             echo "Attempt $i: MSSQL server is not accessible yet."
