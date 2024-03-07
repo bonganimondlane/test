@@ -25,8 +25,12 @@ jobs:
 
     - name: Install mssql-tools
       run: |
-        apt-get update && apt-get install -y mssql-tools
-        echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> /etc/environment
+        apt-get update
+        apt-get install -y curl gnupg
+        curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+        curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
+        apt-get update
+        ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
 
     - name: Wait for MSSQL to start
       run: |
@@ -34,9 +38,8 @@ jobs:
         sleep 60  # Adjust this wait time as needed
         echo "Checking if MSSQL server is accessible..."
         for i in {1..5}; do
-          if sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
+          if /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
             echo "MSSQL server is accessible."
-            sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
             break
           else
             echo "Attempt $i: MSSQL server is not accessible yet."
@@ -47,6 +50,6 @@ jobs:
     - name: Run database query
       run: |
         # Show all databases
-        #/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
 
         # Optionally, you can add more SQL queries here to further test your databases
