@@ -20,8 +20,8 @@ jobs:
     - name: Wait for MSSQL to start
       run: |
         echo "Waiting for MSSQL server to start..."
-        docker inspect --format '{{.State.Running}}' mssql-server | grep true || sleep 10
+        docker inspect --format '{{.State.Running}}' mssql-server | grep true || sleep 20
 
     - name: Run database query
       run: |
-        docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
+        sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
