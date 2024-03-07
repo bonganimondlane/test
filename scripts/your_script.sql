@@ -1,1 +1,2 @@
-DATABASES SHOW;
+CREATE DATABASE testdb;
+EXEC sp_databases;
