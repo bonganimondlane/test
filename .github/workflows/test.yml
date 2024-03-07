@@ -24,7 +24,7 @@ jobs:
 
         # Check if the SQL Server service is ready to accept connections
         for i in {1..5}; do
-          if docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
+          if sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
             echo "MSSQL server is accessible."
             break
           else
