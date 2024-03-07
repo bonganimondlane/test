@@ -20,20 +20,8 @@ jobs:
     - name: Wait for MSSQL to start
       run: |
         echo "Waiting for MSSQL server to start..."
-        sleep 60  # Wait for 60 seconds
-
-        # Check if the SQL Server service is ready to accept connections
-        for i in {1..5}; do
-          if sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
-            echo "MSSQL server is accessible."
-            break
-          else
-            echo "Attempt $i: MSSQL server is not accessible yet."
-            docker ps
-            sleep 10  # Wait for 10 seconds before retrying
-          fi
-        done
-
+        sleep 10  # Wait for 60 seconds
+        
     - name: Run database query from file
       run: |
         sqlcmd -S localhost -U SA -P YourStrong@Password122 -Q "SELECT name FROM sys.databases;"
