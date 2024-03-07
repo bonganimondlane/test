@@ -18,7 +18,6 @@ jobs:
           MSSQL_PID: "Express"
         ports:
           - "1433:1433"
-        options: --name mssql-server
 
     steps:
     - name: Checkout code
@@ -26,16 +25,16 @@ jobs:
 
     - name: Wait for MSSQL to start
       run: |
-        i=0
-        until [ $i -ge 30 ]
-        do
-          echo "Attempting to connect to MSSQL server..."
-          if sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1;" &> /dev/null; then
-            echo "MSSQL server is running."
+        echo "Waiting for MSSQL server to start..."
+        sleep 60  # Adjust this wait time as needed
+        echo "Checking if MSSQL server is accessible..."
+        for i in {1..5}; do
+          if sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
+            echo "MSSQL server is accessible."
             break
           else
-            i=$((i+1))
-            sleep 5
+            echo "Attempt $i: MSSQL server is not accessible yet."
+            sleep 10
           fi
         done
 
