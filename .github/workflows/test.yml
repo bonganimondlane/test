@@ -31,4 +31,4 @@ jobs:
       run: |
         # Your database testing commands go here
         # For example:
-        # sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT * FROM YourTable;"
+        sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SHOW DATABASES;"
