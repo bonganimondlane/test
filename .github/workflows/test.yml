@@ -25,10 +25,23 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Wait for MSSQL to start
-      run: sleep 20
-
-    - name: Run database tests
       run: |
-        # Your database testing commands go here
-        # For example:
+        i=0
+        until [ $i -ge 30 ]
+        do
+          echo "Attempting to connect to MSSQL server..."
+          if sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1;" &> /dev/null; then
+            echo "MSSQL server is running."
+            break
+          else
+            i=$((i+1))
+            sleep 5
+          fi
+        done
+
+    - name: Run database query
+      run: |
+        # Show all databases
         sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
+
+        # Optionally, you can add more SQL queries here to further test your databases
