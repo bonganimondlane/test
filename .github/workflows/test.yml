@@ -26,10 +26,7 @@ jobs:
     - name: Install mssql-tools
       run: |
         apt-get update && apt-get install -y mssql-tools
-        echo 'export PATH="$PATH:/opt/mssql-tools/bin"' | tee -a /etc/profile
-        echo 'export PATH="$PATH:/opt/mssql-tools/bin"' | tee -a ~/.bashrc
-        source /etc/profile
-        source ~/.bashrc
+        echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> /etc/environment
 
     - name: Wait for MSSQL to start
       run: |
@@ -49,6 +46,6 @@ jobs:
     - name: Run database query
       run: |
         # Show all databases
-        sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
+        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
 
         # Optionally, you can add more SQL queries here to further test your databases
