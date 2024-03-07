@@ -24,4 +24,4 @@ jobs:
 
     - name: Run database query
       run: |
-        sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
+        docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
