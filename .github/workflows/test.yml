@@ -29,6 +29,7 @@ jobs:
             break
           else
             echo "Attempt $i: MSSQL server is not accessible yet."
+            docker ps
             sleep 10  # Wait for 10 seconds before retrying
           fi
         done
