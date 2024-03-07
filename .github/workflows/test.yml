@@ -8,48 +8,20 @@ on:
 jobs:
   check_database:
     runs-on: ubuntu-latest
-
-    container:
-      image: mcr.microsoft.com/mssql/server:2019-latest
-      env:
-        ACCEPT_EULA: "Y"
-        SA_PASSWORD: "YourStrongPassword"
-        MSSQL_PID: "Express"
-      ports:
-        - "1433:1433"
-      options: --user root  # Run the job as the root user
-
+    
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Install mssql-tools
+    - name: Download and run MSSQL Docker container
       run: |
-        apt-get update
-        apt-get install -y curl gnupg
-        curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
-        curl https://packages.microsoft.com/config/ubuntu/20.04/prod.list > /etc/apt/sources.list.d/mssql-release.list
-        apt-get update
-        ACCEPT_EULA=Y apt-get install -y mssql-tools unixodbc-dev
+        docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrongPassword' -p 1433:1433 -d mcr.microsoft.com/mssql/server:2019-latest
 
     - name: Wait for MSSQL to start
       run: |
         echo "Waiting for MSSQL server to start..."
-        sleep 60  # Adjust this wait time as needed
-        echo "Checking if MSSQL server is accessible..."
-        for i in {1..5}; do
-          if /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
-            echo "MSSQL server is accessible."
-            break
-          else
-            echo "Attempt $i: MSSQL server is not accessible yet."
-            sleep 10
-          fi
-        done
+        sleep 60
 
     - name: Run database query
       run: |
-        # Show all databases
-        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
-
-        # Optionally, you can add more SQL queries here to further test your databases
+        docker exec $(docker ps -q) /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
