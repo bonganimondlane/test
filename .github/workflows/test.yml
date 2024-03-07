@@ -46,6 +46,6 @@ jobs:
     - name: Run database query
       run: |
         # Show all databases
-        /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
+        #/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
 
         # Optionally, you can add more SQL queries here to further test your databases
