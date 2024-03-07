@@ -17,6 +17,7 @@ jobs:
         MSSQL_PID: "Express"
       ports:
         - "1433:1433"
+      options: --user root  # Run the job as the root user
 
     steps:
     - name: Checkout code
