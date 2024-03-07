@@ -15,13 +15,24 @@ jobs:
 
     - name: Download and run MSSQL Docker container
       run: |
-        docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrongPassword' -p 1433:1433 -d --name mssql-server mcr.microsoft.com/mssql/server:2019-latest
+        docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrongPassword' -p 1433:1433 -d --name mssql-server -v $(pwd):/scripts mcr.microsoft.com/mssql/server:2019-latest
 
     - name: Wait for MSSQL to start
       run: |
         echo "Waiting for MSSQL server to start..."
-        docker inspect --format '{{.State.Running}}' mssql-server | grep true || sleep 20
+        sleep 60  # Wait for 60 seconds
 
-    - name: Run database query
+        # Check if the SQL Server service is ready to accept connections
+        for i in {1..5}; do
+          if docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT 1" &> /dev/null; then
+            echo "MSSQL server is accessible."
+            break
+          else
+            echo "Attempt $i: MSSQL server is not accessible yet."
+            sleep 10  # Wait for 10 seconds before retrying
+          fi
+        done
+
+    - name: Run database query from file
       run: |
-        sqlcmd -S localhost -U SA -P YourStrongPassword -Q "SELECT name FROM sys.databases;"
+        docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -i /scripts/your_script.sql
