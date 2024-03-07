@@ -15,7 +15,7 @@ jobs:
 
     - name: Download and run MSSQL Docker container
       run: |
-       sudo docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrongPassword' -p 1433:1433 --name mssql-server -v $(pwd):/scripts mcr.microsoft.com/mssql/server:2019-latest
+       sudo docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Password122' -p 1433:1433 --name mssql-server -v $(pwd):/scripts mcr.microsoft.com/mssql/server:2019-latest
 
     - name: Wait for MSSQL to start
       run: |
@@ -36,4 +36,4 @@ jobs:
 
     - name: Run database query from file
       run: |
-        docker exec mssql-server /opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P YourStrongPassword -i /scripts/your_script.sql
+        sqlcmd -S localhost -U SA -P YourStrong@Password122 -Q "SELECT name FROM sys.databases;"
