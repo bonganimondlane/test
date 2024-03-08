@@ -1,4 +1,4 @@
-name: Check MSSQL Database
+name: Remote Database
 
 on:
   push:
@@ -13,15 +13,16 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Download and run MSSQL Docker container
+    - name: Install mssql-tools
       run: |
-       sudo docker run -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Password122' -p 1433:1433 -d --name mssql-server -v $(pwd):/scripts mcr.microsoft.com/mssql/server:2019-latest
+        sudo apt-get update
+        sudo apt-get install -y mssql-tools unixodbc-dev
 
     - name: Wait for MSSQL to start
       run: |
         echo "Waiting for MSSQL server to start..."
-        sleep 10  # Wait for 60 seconds
-        
+        sleep 60
+
     - name: Run database query from file
       run: |
-        sqlcmd -S 192.168.17.1,49172 -U testLogin -P Passw@rd123 -i scripts/your_script.sql
+        sqlcmd -S 192.168.17.1,49172 -U testLogin -P Passw@rd123 -Q "SELECT name FROM master.dbo.sysdatabases"
