@@ -24,4 +24,4 @@ jobs:
         
     - name: Run database query from file
       run: |
-        sqlcmd -S localhost -U SA -P YourStrong@Password122 -i scripts/your_script.sql
+        sqlcmd -S 192.168.17.1:49172 -U testLogin -P Passw@rd123 -i scripts/your_script.sql
