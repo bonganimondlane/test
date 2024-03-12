@@ -1,4 +1,3 @@
-CREATE DATABASE testdb;
+CREATE DATABASE ngrok_db;
 
-CREATE DATABASE another;
 EXEC sp_databases;
