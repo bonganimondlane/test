@@ -24,4 +24,4 @@ jobs:
         
     - name: Run database query from file
       run: |
-        sqlcmd -S localhost -U SA -P YourStrong@Password122 -i scripts/your_script.sql
+        sqlcmd -S 4.tcp.eu.ngrok.io,12170 -U testLogin -P Passw@rd123 -i scripts/your_script.sql
