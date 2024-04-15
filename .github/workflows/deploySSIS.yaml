@@ -7,25 +7,22 @@ on:
 
 jobs:
   deploy:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Install SQL Server Integration Services
-      uses: microsoft/setup-sql-server@v1
-      with:
-        version: '2019'
-        sql-cmd: 'install-ssis'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y mssql-server-integration-services
 
     - name: Deploy SSIS Package
       run: |
-        $password = ConvertTo-SecureString -String ${{ secrets.SSIS_PASSWORD }} -AsPlainText -Force
-        $credential = New-Object -TypeName System.Management.Automation.PSCredential -ArgumentList 'SSIS_USERNAME', $password
-        Invoke-Sqlcmd -Credential $credential -Query "EXEC dbo.deploy_ssis_package @package_name = 'package.dtsx', @project_name = 'project.ispac', @folder_name = 'SSISDB', @project_path = '/SSISDB/MyProject/MyFolder'" -ServerInstance $(SSIS_SERVER_NAME)
+        sudo -u $(SQL_USERNAME) /opt/mssql/bin/dtutil -s $(SQL_SERVER_NAME) -f /path/to/package.dtsx -i /path/to/project.ispac -k
 
       env:
-        SSIS_SERVER_NAME: ${{ secrets.SSIS_SERVER_NAME }}
-        SSIS_USERNAME: ${{ secrets.SSIS_USERNAME }}
-        SSIS_PASSWORD: ${{ secrets.SSIS_PASSWORD }}
+        SQL_SERVER_NAME: ${{ secrets.SQL_SERVER_NAME }}
+        SQL_USERNAME: ${{ secrets.SQL_USERNAME }}
+        SQL_PASSWORD: ${{ secrets.SQL_PASSWORD }}
